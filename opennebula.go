@@ -17,13 +17,15 @@ import (
 
 type Driver struct {
 	*drivers.BaseDriver
-	Network        string
-	CPU            string
-	VCPU           string
-	Memory         string
-	DiskSize       string
-	Boot2DockerURL string
-	DatastoreId    string
+	NetworkName     string
+	NetworkOwner    string
+	NetworkId       string
+	CPU             string
+	VCPU            string
+	Memory          string
+	DiskSize        string
+	Boot2DockerURL  string
+	DatastoreId     string
 }
 
 const (
@@ -52,52 +54,64 @@ func NewDriver(hostName, storePath string) *Driver {
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
 		mcnflag.StringFlag{
-			Name:  "opennebula-memory",
-			Usage: "Size of memory for VM in MB",
+			Name:   "opennebula-memory",
+			Usage:  "Size of memory for VM in MB",
 			EnvVar: "ONE_MEMORY",
-			Value: defaultMemory,
+			Value:  defaultMemory,
 		},
 		mcnflag.StringFlag{
-			Name:  "opennebula-cpu",
-			Usage: "CPU value for the VM",
+			Name:   "opennebula-cpu",
+			Usage:  "CPU value for the VM",
 			EnvVar: "ONE_CPU",
-			Value: defaultCPU,
+			Value:  defaultCPU,
 		},
-                mcnflag.StringFlag{
-                        Name:  "opennebula-ssh-user",
-                        Usage: "Set the name of the SSH user",
-                        EnvVar: "ONE_SSH_USER",
-                        Value: defaultSSHUser,
-                },
 		mcnflag.StringFlag{
-			Name:  "opennebula-vcpu",
-			Usage: "VCPUs for the VM",
+			Name:   "opennebula-ssh-user",
+			Usage:  "Set the name of the SSH user",
+			EnvVar: "ONE_SSH_USER",
+			Value:  defaultSSHUser,
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-vcpu",
+			Usage:  "VCPUs for the VM",
 			EnvVar: "ONE_VCPU",
-			Value: defaultCPU,
+			Value:  defaultCPU,
 		},
 		mcnflag.StringFlag{
-			Name:  "opennebula-disk-size",
-			Usage: "Size of disk for VM in MB",
+			Name:   "opennebula-disk-size",
+			Usage:  "Size of disk for VM in MB",
 			EnvVar: "ONE_DISK_SIZE",
-			Value: defaultDiskSize,
+			Value:  defaultDiskSize,
 		},
 		mcnflag.StringFlag{
-			Name:  "opennebula-network",
-			Usage: "Network to connect the machine to (must exist)",
-			EnvVar: "ONE_NETWORK",
-			Value: "",
+			Name:   "opennebula-network-name",
+			Usage:  "Network to connect the machine to",
+			EnvVar: "ONE_NETWORK_NAME",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:  "opennebula-datastore-id",
-			Usage: "Datastore ID of the Boot2Docker image",
+			Name:   "opennebula-network-id",
+			Usage:  "Network ID to connect the machine to",
+			EnvVar: "ONE_NETWORK_ID",
+			Value:  "",
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-network-owner",
+			Usage:  "User ID of the Network to connect the machine to",
+			EnvVar: "ONE_NETWORK_OWNER",
+			Value:  "",
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-datastore-id",
+			Usage:  "Datastore ID of the Boot2Docker image",
 			EnvVar: "ONE_DATASTORE_ID",
-			Value: defaultDatastoreId,
+			Value:  defaultDatastoreId,
 		},
 		mcnflag.StringFlag{
-			Name:  "opennebula-boot2docker-url",
-			Usage: "The URL of the boot2docker image. By default it uses one hosted by OpenNebula.org",
+			Name:   "opennebula-boot2docker-url",
+			Usage:  "The URL of the boot2docker image. By default it uses one hosted by OpenNebula.org",
 			EnvVar: "ONE_BOOT2DOCKER_URL",
-			Value: defaultBoot2DockerURL,
+			Value:  defaultBoot2DockerURL,
 		},
 	}
 }
@@ -107,15 +121,20 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.VCPU = flags.String("opennebula-vcpu")
 	d.Memory = flags.String("opennebula-memory")
 	d.DiskSize = flags.String("opennebula-disk-size")
-	d.Network = flags.String("opennebula-network")
+	d.NetworkName = flags.String("opennebula-network-name")
+	d.NetworkId = flags.String("opennebula-network-id")
+	d.NetworkOwner = flags.String("opennebula-network-owner")
 	d.DatastoreId = flags.String("opennebula-datastore-id")
 	d.Boot2DockerURL = flags.String("opennebula-boot2docker-url")
 	d.SSHUser = flags.String("opennebula-ssh-user")
 
-	if d.Network == "" {
-		return errors.New("Please specify a network to connect to (--opennebula-network).")
+	if d.NetworkName == "" && d.NetworkId == "" {
+		return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
 	}
 
+ 	if d.NetworkName != "" && d.NetworkId != "" {
+		return errors.New("Please specify a network to connect to either with  --opennebula-network-name or --opennebula-network-id, not both.")
+	}
 	return nil
 }
 
@@ -212,8 +231,15 @@ func (d *Driver) Create() error {
 	}
 
 	vector := template.NewVector("NIC")
-	vector.AddValue("NETWORK", d.Network)
-
+	if d.NetworkName != "" {
+		vector.AddValue("NETWORK", d.NetworkName)
+  	 	if d.NetworkOwner != "" {
+			vector.AddValue("NETWORK_UNAME", d.NetworkOwner)
+		}
+	}
+        if d.NetworkId != "" {
+		vector.AddValue("NETWORK_ID", d.NetworkId)
+	}
 	vector = template.NewVector("DISK")
 	vector.AddValue("IMAGE_ID", b2d_id)
 	vector.AddValue("DEV_PREFIX", "sd")

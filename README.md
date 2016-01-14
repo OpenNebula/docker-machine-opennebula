@@ -29,7 +29,10 @@ $ docker-machine create --driver opennebula --opennebula-network private one-boo
 
 ## Available Driver Options
 
- - `--opennebula-network`: Network to connect the machine to (mandatory option) 
+It is required to specify the network the machine will be connected to with `--opennebula-network-name` or `--opennebula-network-id`; in case `--opennebula-network-name` is used then the owner of the network can be passed with `--opennebula-network-owner` if it is different from the user in the file `ONE_AUTH`.
+
+ - `--opennebula-network-name` or `--opennebula-network-id`: Identify the network the machine will be connected to
+ - `--opennebula-network-owner`: Owner of the network the machine will be connected to
  - `--opennebula-boot2docker-url`: The url of boot2docker image with [Docker](http://www.docker.com) 1.9 installed and OpenNebula context packages
  - `--opennebula-disk-size`: Size of disk for host in MB
  - `--opennebula-memory`: Size of memory for VM in MB.
@@ -43,7 +46,9 @@ Environment variables and default values:
 
 | CLI option                     | Environment variable  | Default  value                          | Required       | 
 |--------------------------------|-----------------------|-----------------------------------------|----------------|
-| `--opennebula-network`         | `ONE_NETWORK`         | No                                      |  Yes           |
+| `--opennebula-network-name`    | `ONE_NETWORK_NAME`    | No                                      |  Yes           |
+| `--opennebula-network-owner`   | `ONE_NETWORK_OWNER`   | No                                      |  No            |
+| `--opennebula-network-id`      | `ONE_NETWORK_ID`      | No                                      |  Yes           |
 | `--opennebula-boot2docker-url` | `ONE_BOOT2DOCKER_URL` | https://s3.eu-central-1.amazonaws.com/one-boot2d/boot2docker-v1.9.1.iso |  No            |
 | `--opennebula-cpu`             | `ONE_CPU`             | `1`                                     |  No            |
 | `--opennebula-vcpu`            | `ONE_VCPU`            | `1`                                     |  No            |
