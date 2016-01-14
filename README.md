@@ -12,8 +12,8 @@ Make sure [Go](http://www.golang.org) and [Godep](https://github.com/tools/godep
 To build the plugin binary:
 
 ```bash
-$ git clone https://github.com/km4rcus/docker-machine-opennebula
-$ cd docker-machine-opennebula
+$ go get github.com/km4rcus/docker-machine-opennebula
+$ cd $GOPATH/src/github.com/km4rcus/docker-machine-opennebula
 $ make build
 ```
 After the build is complete, `bin/docker-machine-driver-opennebula` binary will be created and it must included in `$PATH` variable. If you want to copy it to the `${GOPATH}/bin/`, run `make install`.
