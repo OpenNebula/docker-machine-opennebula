@@ -299,3 +299,7 @@ func (vm *VM) Shutdown() error {
 func (vm *VM) ShutdownHard() error {
 	return vm.Action("shutdown-hard")
 }
+
+func (vm *VM) Delete() error {
+	return vm.Action("delete")
+}
