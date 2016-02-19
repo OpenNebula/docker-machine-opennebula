@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/OpenNebula/docker-machine-opennebula"
 	"github.com/docker/machine/libmachine/drivers/plugin"
-	"github.com/km4rcus/docker-machine-opennebula"
 )
 
 func main() {
