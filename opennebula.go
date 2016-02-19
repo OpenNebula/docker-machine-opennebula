@@ -31,12 +31,11 @@ type Driver struct {
 }
 
 const (
-	defaultTimeout  = 1 * time.Second
-	defaultSSHUser  = "docker"
-	defaultCPU      = "1"
-	defaultVCPU     = "1"
-	defaultMemory   = "1024"
-	defaultDiskSize = "20000"
+	defaultTimeout = 1 * time.Second
+	defaultSSHUser = "docker"
+	defaultCPU     = "1"
+	defaultVCPU    = "1"
+	defaultMemory  = "1024"
 
 	contextScript = `#!/bin/bash
 
@@ -104,7 +103,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Name:   "opennebula-disk-size",
 			Usage:  "Size of disk for VM in MB",
 			EnvVar: "ONE_DISK_SIZE",
-			Value:  defaultDiskSize,
+			Value:  "",
 		},
 		mcnflag.StringFlag{
 			Name:   "opennebula-network-name",
@@ -247,7 +246,9 @@ func (d *Driver) Create() error {
 		}
 	}
 
-	vector.AddValue("SIZE", string(d.DiskSize))
+	if d.DiskSize != "" {
+		vector.AddValue("SIZE", d.DiskSize)
+	}
 
 	if d.ImageDevPrefix != "" {
 		vector.AddValue("DEV_PREFIX", d.ImageDevPrefix)
