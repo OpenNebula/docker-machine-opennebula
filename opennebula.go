@@ -472,7 +472,10 @@ func (d *Driver) Remove() error {
 
 	err = vm.ShutdownHard()
 	if err != nil {
-		return err
+		err = vm.Delete()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
