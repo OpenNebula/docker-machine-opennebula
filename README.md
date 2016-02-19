@@ -40,18 +40,32 @@ It is required to specify the network the machine will be connected to with `--o
 
 It is also necessary to specify the image to use by specifying `--opennebula-image-id` or `--opennebula-image-name` (and optionally `opennebula-image-owner`).
 
+List of Options:
 
-|         CLI Option         |                        Description                         | Default Value |  Environment Variable  |
-|----------------------------|------------------------------------------------------------|---------------|------------------------|
-| --opennebula-cpu           | CPU value for the VM                                       | `1`           | `ONE_CPU`              |
-| --opennebula-dev-prefix    | Dev prefix to use for the images: 'vd', 'sd', 'hd', etc... |               | `ONE_IMAGE_DEV_PREFIX` |
-| --opennebula-disk-size     | Size of disk for VM in MB                                  |               | `ONE_DISK_SIZE`        |
-| --opennebula-image-id      | Image ID to use as the OS                                  |               | `ONE_IMAGE_ID`         |
-| --opennebula-image-name    | Image to use as the OS                                     |               | `ONE_IMAGE_NAME`       |
-| --opennebula-image-owner   | Owner of the image to use as the OS                        |               | `ONE_IMAGE_OWNER`      |
-| --opennebula-memory        | Size of memory for VM in MB                                | `1024`        | `ONE_MEMORY`           |
-| --opennebula-network-id    | Network ID to connect the machine to                       |               | `ONE_NETWORK_ID`       |
-| --opennebula-network-name  | Network to connect the machine to                          |               | `ONE_NETWORK_NAME`     |
-| --opennebula-network-owner | User ID of the Network to connect the machine to           |               | `ONE_NETWORK_OWNER`    |
-| --opennebula-ssh-user      | Set the name of the SSH user                               | `docker`      | `ONE_SSH_USER`         |
-| --opennebula-vcpu          | VCPUs for the VM                                           | `1`           | `ONE_VCPU`             |
+* `--opennebula-cpu`: CPU value for the VM
+* `--opennebula-dev-prefix`: Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...
+* `--opennebula-disk-size`: Size of disk for VM in MB
+* `--opennebula-image-id`: Image ID to use as the OS
+* `--opennebula-image-name`: Image to use as the OS
+* `--opennebula-image-owner`: Owner of the image to use as the OS
+* `--opennebula-memory`: Size of memory for VM in MB
+* `--opennebula-network-id`: Network ID to connect the machine to
+* `--opennebula-network-name`: Network to connect the machine to
+* `--opennebula-network-`: User ID of the Network to connect the machine to
+* `--opennebula-ssh-user`: Set the name of the SSH user
+* `--opennebula-vcpu`: VCPUs for the VM
+
+|          CLI Option          | Default Value |  Environment Variable  |
+|------------------------------|---------------|------------------------|
+| `--opennebula-cpu`           | `1`           | `ONE_CPU`              |
+| `--opennebula-dev-prefix`    |               | `ONE_IMAGE_DEV_PREFIX` |
+| `--opennebula-disk-size`     |               | `ONE_DISK_SIZE`        |
+| `--opennebula-image-id`      |               | `ONE_IMAGE_ID`         |
+| `--opennebula-image-name`    |               | `ONE_IMAGE_NAME`       |
+| `--opennebula-image-owner`   |               | `ONE_IMAGE_OWNER`      |
+| `--opennebula-memory`        | `1024`        | `ONE_MEMORY`           |
+| `--opennebula-network-id`    |               | `ONE_NETWORK_ID`       |
+| `--opennebula-network-name`  |               | `ONE_NETWORK_NAME`     |
+| `--opennebula-network-owner` |               | `ONE_NETWORK_OWNER`    |
+| `--opennebula-ssh-user`      | `docker`      | `ONE_SSH_USER`         |
+| `--opennebula-vcpu`          | `1`           | `ONE_VCPU`             |
