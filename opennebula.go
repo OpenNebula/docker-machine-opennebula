@@ -28,6 +28,7 @@ type Driver struct {
 	Memory         string
 	DiskSize       string
 	ImageDevPrefix string
+	DisableVNC     bool
 }
 
 const (
@@ -147,6 +148,11 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			EnvVar: "ONE_IMAGE_DEV_PREFIX",
 			Value:  "",
 		},
+		mcnflag.BoolFlag{
+			Name:   "opennebula-disable-vnc",
+			Usage:  "VNC is enabled by default. Disable it with this flag",
+			EnvVar: "ONE_DISABLE_VNC",
+		},
 	}
 }
 
@@ -163,6 +169,7 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.ImageOwner = flags.String("opennebula-image-owner")
 	d.SSHUser = flags.String("opennebula-ssh-user")
 	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
+	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
 
 	if d.NetworkName == "" && d.NetworkId == "" {
 		return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
@@ -261,9 +268,12 @@ func (d *Driver) Create() error {
 	contextScript64 := base64.StdEncoding.EncodeToString([]byte(contextScript))
 	vector.AddValue("START_SCRIPT_BASE64", contextScript64)
 
-	vector = template.NewVector("GRAPHICS")
-	vector.AddValue("LISTEN", "0.0.0.0")
-	vector.AddValue("TYPE", "vnc")
+	// VNC
+	if !d.DisableVNC {
+		vector = template.NewVector("GRAPHICS")
+		vector.AddValue("LISTEN", "0.0.0.0")
+		vector.AddValue("TYPE", "vnc")
+	}
 
 	// Instantiate
 	log.Infof("Starting  VM...")
