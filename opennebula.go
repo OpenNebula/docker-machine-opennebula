@@ -28,6 +28,7 @@ type Driver struct {
 	Memory         string
 	DiskSize       string
 	ImageDevPrefix string
+	DataSize       string
 	DisableVNC     bool
 }
 
@@ -168,6 +169,12 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			EnvVar: "ONE_IMAGE_DEV_PREFIX",
 			Value:  "",
 		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-data-size",
+			Usage:  "Size of the Volatile disk in MB (only for b2d)",
+			EnvVar: "ONE_B2D_DATA_SIZE",
+			Value:  "",
+		},
 		mcnflag.BoolFlag{
 			Name:   "opennebula-disable-vnc",
 			Usage:  "VNC is enabled by default. Disable it with this flag",
@@ -189,6 +196,7 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.ImageOwner = flags.String("opennebula-image-owner")
 	d.SSHUser = flags.String("opennebula-ssh-user")
 	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
+	d.DataSize = flags.String("opennebula-data-size")
 	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
 
 	if d.NetworkName == "" && d.NetworkId == "" {
@@ -281,6 +289,15 @@ func (d *Driver) Create() error {
 		vector.AddValue("DEV_PREFIX", d.ImageDevPrefix)
 	}
 
+	// Add a volatile disk for b2d
+	if d.DataSize != "" {
+		vector = template.NewVector("DISK")
+		vector.AddValue("SIZE", d.DataSize)
+		vector.AddValue("TYPE", "fs")
+		vector.AddValue("FORMAT", "ext4")
+	}
+
+	// Context
 	vector = template.NewVector("CONTEXT")
 	vector.AddValue("NETWORK", "YES")
 	vector.AddValue("SSH_PUBLIC_KEY", "$USER[SSH_PUBLIC_KEY]")
