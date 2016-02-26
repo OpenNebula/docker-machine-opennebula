@@ -38,14 +38,36 @@ const (
 	defaultVCPU    = "1"
 	defaultMemory  = "1024"
 
-	contextScript = `#!/bin/bash
+	// This is the contextualization script that will be executed by OpenNebula
+	contextScript = `#!/bin/sh
 
-USERNAME=docker
-GROUPNAME=docker
-USER_HOME=/var/lib/docker
+if [ -f /etc/boot2docker ]; then
+	USERNAME=docker
+	USER_HOME=/home/docker
+else
+	USERNAME=$DOCKER_SSH_USER
+	GROUPNAME=$DOCKER_SSH_USER
 
-groupadd $GROUPNAME
-useradd -m -d $USER_HOME -g $USERNAME $GROUPNAME
+	if ! getent group $GROUPNAME; then
+		groupadd $GROUPNAME
+	fi
+
+	if ! getent passwd $USERNAME; then
+		USER_HOME=/var/lib/$DOCKER_SSH_USER
+		useradd -m -d $USER_HOME -g $USERNAME $GROUPNAME
+	else
+		USER_HOME=$(getent passwd $USERNAME | cut -d: -f 6)
+	fi
+
+	# Write sudoers
+	if [ ! -f /etc/sudoers.d/$USERNAME ]; then
+		echo -n "Defaults:$USERNAME " >> /etc/sudoers.d/$USERNAME
+		echo '!requiretty' >> /etc/sudoers.d/$USERNAME
+		echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
+	fi
+fi
+
+# Add DOCKER_SSH_PUBLIC_KEY
 
 AUTH_DIR="${USER_HOME}/.ssh"
 AUTH_FILE="${AUTH_DIR}/authorized_keys"
@@ -57,8 +79,6 @@ echo "$DOCKER_SSH_PUBLIC_KEY" >> $AUTH_FILE
 chown "${USERNAME}": ${AUTH_DIR} ${AUTH_FILE}
 chmod 600 $AUTH_FILE
 
-echo 'Defaults:$USERNAME !requiretty' >> /etc/sudoers.d/$USERNAME
-echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME
 `
 )
 
@@ -264,6 +284,7 @@ func (d *Driver) Create() error {
 	vector = template.NewVector("CONTEXT")
 	vector.AddValue("NETWORK", "YES")
 	vector.AddValue("SSH_PUBLIC_KEY", "$USER[SSH_PUBLIC_KEY]")
+	vector.AddValue("DOCKER_SSH_USER", d.SSHUser)
 	vector.AddValue("DOCKER_SSH_PUBLIC_KEY", string(pubKey))
 	contextScript64 := base64.StdEncoding.EncodeToString([]byte(contextScript))
 	vector.AddValue("START_SCRIPT_BASE64", contextScript64)
