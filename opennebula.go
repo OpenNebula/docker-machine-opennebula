@@ -198,6 +198,7 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
 	d.DataSize = flags.String("opennebula-data-size")
 	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
+        d.SetSwarmConfigFromFlags(flags)
 
 	if d.NetworkName == "" && d.NetworkId == "" {
 		return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
