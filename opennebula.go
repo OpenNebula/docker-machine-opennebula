@@ -28,7 +28,7 @@ type Driver struct {
 	Memory         string
 	DiskSize       string
 	ImageDevPrefix string
-	DataSize       string
+	B2DSize        string
 	DisableVNC     bool
 }
 
@@ -78,9 +78,7 @@ mkdir -m0700 -p $AUTH_DIR
 echo "$DOCKER_SSH_PUBLIC_KEY" >> $AUTH_FILE
 
 chown "${USERNAME}": ${AUTH_DIR} ${AUTH_FILE}
-chmod 600 $AUTH_FILE
-
-`
+chmod 600 $AUTH_FILE`
 )
 
 func NewDriver(hostName, storePath string) *Driver {
@@ -122,7 +120,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  defaultVCPU,
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-disk-size",
+			Name:   "opennebula-disk-resize",
 			Usage:  "Size of disk for VM in MB",
 			EnvVar: "ONE_DISK_SIZE",
 			Value:  "",
@@ -170,7 +168,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-data-size",
+			Name:   "opennebula-b2d-size",
 			Usage:  "Size of the Volatile disk in MB (only for b2d)",
 			EnvVar: "ONE_B2D_DATA_SIZE",
 			Value:  "",
@@ -187,7 +185,7 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.CPU = flags.String("opennebula-cpu")
 	d.VCPU = flags.String("opennebula-vcpu")
 	d.Memory = flags.String("opennebula-memory")
-	d.DiskSize = flags.String("opennebula-disk-size")
+	d.DiskSize = flags.String("opennebula-disk-resize")
 	d.NetworkName = flags.String("opennebula-network-name")
 	d.NetworkId = flags.String("opennebula-network-id")
 	d.NetworkOwner = flags.String("opennebula-network-owner")
@@ -196,9 +194,9 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.ImageOwner = flags.String("opennebula-image-owner")
 	d.SSHUser = flags.String("opennebula-ssh-user")
 	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
-	d.DataSize = flags.String("opennebula-data-size")
+	d.B2DSize = flags.String("opennebula-b2d-size")
 	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
-        d.SetSwarmConfigFromFlags(flags)
+	d.SetSwarmConfigFromFlags(flags)
 
 	if d.NetworkName == "" && d.NetworkId == "" {
 		return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
@@ -252,6 +250,8 @@ func (d *Driver) Create() error {
 	template := goca.NewTemplateBuilder()
 
 	template.AddValue("NAME", d.MachineName)
+
+	// Capacity
 	template.AddValue("CPU", d.CPU)
 	template.AddValue("MEMORY", d.Memory)
 
@@ -259,6 +259,7 @@ func (d *Driver) Create() error {
 		template.AddValue("VCPU", d.VCPU)
 	}
 
+	// Network
 	vector := template.NewVector("NIC")
 	if d.NetworkName != "" {
 		vector.AddValue("NETWORK", d.NetworkName)
@@ -271,6 +272,7 @@ func (d *Driver) Create() error {
 		vector.AddValue("NETWORK_ID", d.NetworkId)
 	}
 
+	// OS Disk
 	vector = template.NewVector("DISK")
 
 	if d.ImageId != "" {
@@ -291,11 +293,11 @@ func (d *Driver) Create() error {
 	}
 
 	// Add a volatile disk for b2d
-	if d.DataSize != "" {
+	if d.B2DSize != "" {
 		vector = template.NewVector("DISK")
-		vector.AddValue("SIZE", d.DataSize)
+		vector.AddValue("SIZE", d.B2DSize)
 		vector.AddValue("TYPE", "fs")
-		vector.AddValue("FORMAT", "ext4")
+		vector.AddValue("FORMAT", "raw")
 	}
 
 	// Context

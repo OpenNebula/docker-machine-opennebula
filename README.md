@@ -40,7 +40,7 @@ To use this plugin you will need to choose an OpenNebula image where docker will
 Import [boot2docker for OpenNebula](http://marketplace.opennebula.systems/appliance/56d073858fb81d0315000002) into OpenNebula and then use the following arguments in docker-machine:
 
 ```bash
-$ docker-machine create --driver opennebula --opennebula-network-name $NETWORK_NAME --opennebula-image-id $BOOT2DOCKER_IMG_ID --opennebula-data-size $DATA_SIZE_MB b2d
+$ docker-machine create --driver opennebula --opennebula-network-name $NETWORK_NAME --opennebula-image-id $BOOT2DOCKER_IMG_ID --opennebula-b2d-size $DATA_SIZE_MB b2d
 ```
 
 Remember to substitute:
@@ -70,7 +70,7 @@ List of Options:
 
 * `--opennebula-cpu`: CPU value for the VM
 * `--opennebula-dev-prefix`: Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...
-* `--opennebula-disk-size`: Size of disk for VM in MB
+* `--opennebula-disk-resize`: Size of disk for VM in MB
 * `--opennebula-image-id`: Image ID to use as the OS
 * `--opennebula-image-name`: Image to use as the OS
 * `--opennebula-image-owner`: Owner of the image to use as the OS
@@ -81,13 +81,13 @@ List of Options:
 * `--opennebula-ssh-user`: Set the name of the SSH user
 * `--opennebula-vcpu`: VCPUs for the VM
 * `--opennebula-disable-vnc`: VNC is enabled by default. Disable it with this flag
-* `--opennebula-data-size`: Size of the Volatile disk in MB (only for b2d)
+* `--opennebula-b2d-size`: Size of the Volatile disk in MB (only for b2d)
 
 |          CLI Option          | Default Value |  Environment Variable  |
 |------------------------------|---------------|------------------------|
 | `--opennebula-cpu`           | `1`           | `ONE_CPU`              |
 | `--opennebula-dev-prefix`    |               | `ONE_IMAGE_DEV_PREFIX` |
-| `--opennebula-disk-size`     |               | `ONE_DISK_SIZE`        |
+| `--opennebula-disk-resize`   |               | `ONE_DISK_SIZE`        |
 | `--opennebula-image-id`      |               | `ONE_IMAGE_ID`         |
 | `--opennebula-image-name`    |               | `ONE_IMAGE_NAME`       |
 | `--opennebula-image-owner`   |               | `ONE_IMAGE_OWNER`      |
@@ -98,9 +98,9 @@ List of Options:
 | `--opennebula-ssh-user`      | `docker`      | `ONE_SSH_USER`         |
 | `--opennebula-vcpu`          | `1`           | `ONE_VCPU`             |
 | `--opennebula-disable-vnc`   | Enabled       | `ONE_DISABLE_VNC`      |
-| `--opennebula-data-size`     |               | `ONE_B2D_DATA_SIZE`    |
+| `--opennebula-b2d-size`      |               | `ONE_B2D_DATA_SIZE`    |
 
 Remember that:
 
-* If you are using a regular vanilla OS image in OpenNebula you can use `--opennebula-disk-size` to resize the size of the OS, but you should never use `--opennebula-data-size` in this case. If you don't specify `--opennebula-disk-size`, the size of the disk will be the default one, the one of the image.
-* If you are using boot2docker, you have to use `--opennebula-data-size`, in order to provision an extra data disk, but you should never use `--opennebula-disk-size` in this case.
+* If you are using a regular vanilla OS image in OpenNebula you can use `--opennebula-disk-resize` to resize the size of the OS, but you should never use `--opennebula-b2d-size` in this case. If you don't specify `--opennebula-disk-resize`, the size of the disk will be the default one, the one of the image.
+* If you are using boot2docker, you have to use `--opennebula-b2d-size`, in order to provision an extra data disk, but you should never use `--opennebula-disk-resize` in this case.
