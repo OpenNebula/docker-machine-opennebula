@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"time"
 
 	"github.com/OpenNebula/goca"
@@ -17,6 +18,8 @@ import (
 
 type Driver struct {
 	*drivers.BaseDriver
+	TemplateName   string
+	TemplateId     string
 	NetworkName    string
 	NetworkOwner   string
 	NetworkId      string
@@ -96,33 +99,33 @@ func NewDriver(hostName, storePath string) *Driver {
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
 		mcnflag.StringFlag{
-			Name:   "opennebula-memory",
-			Usage:  "Size of memory for VM in MB",
-			EnvVar: "ONE_MEMORY",
-			Value:  defaultMemory,
-		},
-		mcnflag.StringFlag{
 			Name:   "opennebula-cpu",
-			Usage:  "CPU value for the VM",
+			Usage:  fmt.Sprintf("CPU value for the VM. Default: %d", defaultCPU),
 			EnvVar: "ONE_CPU",
-			Value:  defaultCPU,
-		},
-		mcnflag.StringFlag{
-			Name:   "opennebula-ssh-user",
-			Usage:  "Set the name of the SSH user",
-			EnvVar: "ONE_SSH_USER",
-			Value:  defaultSSHUser,
+			Value:  "",
 		},
 		mcnflag.StringFlag{
 			Name:   "opennebula-vcpu",
-			Usage:  "VCPUs for the VM",
+			Usage:  fmt.Sprintf("VCPUs for the VM. Default: %d", defaultVCPU),
 			EnvVar: "ONE_VCPU",
-			Value:  defaultVCPU,
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-disk-resize",
-			Usage:  "Size of disk for VM in MB",
-			EnvVar: "ONE_DISK_SIZE",
+			Name:   "opennebula-memory",
+			Usage:  fmt.Sprintf("Size of memory for VM in MB. Default: %d", defaultMemory),
+			EnvVar: "ONE_MEMORY",
+			Value:  "",
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-template-name",
+			Usage:  "Template to use",
+			EnvVar: "ONE_TEMPLATE_NAME",
+			Value:  "",
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-template-id",
+			Usage:  "Template ID to use",
+			EnvVar: "ONE_TEMPLATE_ID",
 			Value:  "",
 		},
 		mcnflag.StringFlag{
@@ -168,10 +171,22 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  "",
 		},
 		mcnflag.StringFlag{
+			Name:   "opennebula-disk-resize",
+			Usage:  "Size of disk for VM in MB",
+			EnvVar: "ONE_DISK_SIZE",
+			Value:  "",
+		},
+		mcnflag.StringFlag{
 			Name:   "opennebula-b2d-size",
 			Usage:  "Size of the Volatile disk in MB (only for b2d)",
 			EnvVar: "ONE_B2D_DATA_SIZE",
 			Value:  "",
+		},
+		mcnflag.StringFlag{
+			Name:   "opennebula-ssh-user",
+			Usage:  "Set the name of the SSH user",
+			EnvVar: "ONE_SSH_USER",
+			Value:  defaultSSHUser,
 		},
 		mcnflag.BoolFlag{
 			Name:   "opennebula-disable-vnc",
@@ -182,36 +197,102 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 }
 
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
+	d.SetSwarmConfigFromFlags(flags)
+
+	// Capacity
 	d.CPU = flags.String("opennebula-cpu")
 	d.VCPU = flags.String("opennebula-vcpu")
 	d.Memory = flags.String("opennebula-memory")
-	d.DiskSize = flags.String("opennebula-disk-resize")
+
+	// Template
+	d.TemplateName = flags.String("opennebula-template-name")
+	d.TemplateId = flags.String("opennebula-template-id")
+
+	// Network
 	d.NetworkName = flags.String("opennebula-network-name")
 	d.NetworkId = flags.String("opennebula-network-id")
 	d.NetworkOwner = flags.String("opennebula-network-owner")
+
+	// Storage
 	d.ImageId = flags.String("opennebula-image-id")
 	d.ImageName = flags.String("opennebula-image-name")
 	d.ImageOwner = flags.String("opennebula-image-owner")
-	d.SSHUser = flags.String("opennebula-ssh-user")
-	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
-	d.B2DSize = flags.String("opennebula-b2d-size")
-	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
-	d.SetSwarmConfigFromFlags(flags)
 
-	if d.NetworkName == "" && d.NetworkId == "" {
-		return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
+	d.ImageDevPrefix = flags.String("opennebula-dev-prefix")
+	d.DiskSize = flags.String("opennebula-disk-resize")
+	d.B2DSize = flags.String("opennebula-b2d-size")
+
+	// Provision
+	d.SSHUser = flags.String("opennebula-ssh-user")
+
+	// VNC
+	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
+
+	// Either TemplateName or TemplateId
+	if d.TemplateName != "" && d.TemplateId != "" {
+		return errors.New("Please specify only one of: --opennebula-template-name or --opennebula-template-id, not both.")
 	}
 
+	// Either NetworkName or NetworkId
 	if d.NetworkName != "" && d.NetworkId != "" {
 		return errors.New("Please specify only one of: --opennebula-network-name or --opennebula-network-id, not both.")
 	}
 
-	if d.ImageName == "" && d.ImageId == "" {
-		return errors.New("Please specify a image to use as the OS with --opennebula-image-name or --opennebula-image-id.")
-	}
-
+	// Either ImageName or ImageId
 	if d.ImageName != "" && d.ImageId != "" {
 		return errors.New("Please specify only one of: --opennebula-image-name or --opennebula-image-id, not both.")
+	}
+
+	// Required and incompatible options for Template
+	if d.TemplateName != "" || d.TemplateId != "" {
+		// Template has been specified:
+
+		// ImageName and ImageId are incompatible
+		if d.ImageName != "" || d.ImageId != "" {
+			return errors.New("The options --opennebula-image-* are incompatible with --opennebula-template-*.")
+		}
+
+		// ImageDevPrefix is incompatible
+		if d.ImageDevPrefix != "" {
+			return errors.New("The option: --opennebula-dev-prefix is incompatible with --opennebula-template-*.")
+		}
+		// DiskSize is incompatible
+		if d.DiskSize != "" {
+			return errors.New("The option: --opennebula-disk-resize is incompatible with --opennebula-template-*.")
+		}
+		// B2DSize is incompatible
+		if d.B2DSize != "" {
+			return errors.New("The option: --opennebula-disk-resize is incompatible with --opennebula-template-*.")
+		}
+		// DisableVNC is incompatible
+		if d.DisableVNC {
+			return errors.New("The option: --opennebula-disable-vnc is incompatible with --opennebula-template-*.")
+		}
+	} else {
+		//Template has NOT been specified:
+
+		// ImageName or ImageId is required
+		if d.ImageName == "" && d.ImageId == "" {
+			return errors.New("Please specify a image to use as the OS with --opennebula-image-name or --opennebula-image-id.")
+		}
+
+		// NetworkName or NetworkId is required
+		if d.NetworkName == "" && d.NetworkId == "" {
+			return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
+		}
+
+		// Assign default capacity values
+		if d.CPU == "" {
+			d.CPU = defaultCPU
+		}
+
+		if d.VCPU == "" {
+			d.VCPU = defaultVCPU
+		}
+
+		if d.Memory == "" {
+			d.Memory = defaultMemory
+		}
 	}
 
 	return nil
@@ -234,7 +315,12 @@ func (d *Driver) PreCreateCheck() error {
 }
 
 func (d *Driver) Create() error {
-	var err error
+	var (
+		vector     *goca.TemplateBuilderVector
+		vmtemplate *goca.Template
+
+		err error
+	)
 
 	log.Infof("Creating SSH key...")
 	if err := ssh.GenerateSSHKey(d.GetSSHKeyPath()); err != nil {
@@ -249,55 +335,76 @@ func (d *Driver) Create() error {
 	// Create template
 	template := goca.NewTemplateBuilder()
 
-	template.AddValue("NAME", d.MachineName)
+	if d.TemplateName != "" || d.TemplateId != "" {
+		// Template has been specified
+	} else {
+		// Template has NOT been specified
+
+		template.AddValue("NAME", d.MachineName)
+
+		// OS Disk
+		vector = template.NewVector("DISK")
+
+		if d.ImageId != "" {
+			vector.AddValue("IMAGE_ID", d.ImageId)
+		} else {
+			vector.AddValue("IMAGE", d.ImageName)
+			if d.ImageOwner != "" {
+				vector.AddValue("IMAGE_UNAME", d.ImageOwner)
+			}
+		}
+
+		if d.DiskSize != "" {
+			vector.AddValue("SIZE", d.DiskSize)
+		}
+
+		if d.ImageDevPrefix != "" {
+			vector.AddValue("DEV_PREFIX", d.ImageDevPrefix)
+		}
+
+		// Add a volatile disk for b2d
+		if d.B2DSize != "" {
+			vector = template.NewVector("DISK")
+			vector.AddValue("SIZE", d.B2DSize)
+			vector.AddValue("TYPE", "fs")
+			vector.AddValue("FORMAT", "raw")
+		}
+
+		// VNC
+		if !d.DisableVNC {
+			vector = template.NewVector("GRAPHICS")
+			vector.AddValue("LISTEN", "0.0.0.0")
+			vector.AddValue("TYPE", "vnc")
+		}
+	}
 
 	// Capacity
-	template.AddValue("CPU", d.CPU)
-	template.AddValue("MEMORY", d.Memory)
+	if d.CPU != "" {
+		template.AddValue("CPU", d.CPU)
+	}
+
+	if d.Memory != "" {
+		template.AddValue("MEMORY", d.Memory)
+	}
 
 	if d.VCPU != "" {
 		template.AddValue("VCPU", d.VCPU)
 	}
 
 	// Network
-	vector := template.NewVector("NIC")
-	if d.NetworkName != "" {
-		vector.AddValue("NETWORK", d.NetworkName)
-		if d.NetworkOwner != "" {
-			vector.AddValue("NETWORK_UNAME", d.NetworkOwner)
+	if d.NetworkName != "" || d.NetworkId != "" {
+		vector = template.NewVector("NIC")
+
+		if d.NetworkName != "" {
+			vector.AddValue("NETWORK", d.NetworkName)
+			if d.NetworkOwner != "" {
+				vector.AddValue("NETWORK_UNAME", d.NetworkOwner)
+			}
 		}
-	}
 
-	if d.NetworkId != "" {
-		vector.AddValue("NETWORK_ID", d.NetworkId)
-	}
-
-	// OS Disk
-	vector = template.NewVector("DISK")
-
-	if d.ImageId != "" {
-		vector.AddValue("IMAGE_ID", d.ImageId)
-	} else {
-		vector.AddValue("IMAGE", d.ImageName)
-		if d.ImageOwner != "" {
-			vector.AddValue("IMAGE_UNAME", d.ImageOwner)
+		if d.NetworkId != "" {
+			vector.AddValue("NETWORK_ID", d.NetworkId)
 		}
-	}
-
-	if d.DiskSize != "" {
-		vector.AddValue("SIZE", d.DiskSize)
-	}
-
-	if d.ImageDevPrefix != "" {
-		vector.AddValue("DEV_PREFIX", d.ImageDevPrefix)
-	}
-
-	// Add a volatile disk for b2d
-	if d.B2DSize != "" {
-		vector = template.NewVector("DISK")
-		vector.AddValue("SIZE", d.B2DSize)
-		vector.AddValue("TYPE", "fs")
-		vector.AddValue("FORMAT", "raw")
 	}
 
 	// Context
@@ -309,16 +416,30 @@ func (d *Driver) Create() error {
 	contextScript64 := base64.StdEncoding.EncodeToString([]byte(contextScript))
 	vector.AddValue("START_SCRIPT_BASE64", contextScript64)
 
-	// VNC
-	if !d.DisableVNC {
-		vector = template.NewVector("GRAPHICS")
-		vector.AddValue("LISTEN", "0.0.0.0")
-		vector.AddValue("TYPE", "vnc")
-	}
-
 	// Instantiate
 	log.Infof("Starting  VM...")
-	_, err = goca.CreateVM(template.String(), false)
+
+	if d.TemplateName != "" || d.TemplateId != "" {
+
+		if d.TemplateName != "" {
+			vmtemplate, err = goca.NewTemplateFromName(d.TemplateName)
+			if err != nil {
+				return err
+			}
+		} else {
+			templateId, err := strconv.Atoi(d.TemplateId)
+			if err != nil {
+				return err
+			}
+			vmtemplate = goca.NewTemplate(uint(templateId))
+		}
+
+		_, err = vmtemplate.Instantiate(d.MachineName, false, template.String())
+
+	} else {
+		_, err = goca.CreateVM(template.String(), false)
+	}
+
 	if err != nil {
 		return err
 	}
