@@ -53,14 +53,13 @@ func CreateImage(template string, ds_id uint) (uint, error) {
 }
 
 func NewImagePool(args ...int) (*ImagePool, error) {
-	var who, start_id, end_id, state int
+	var who, start_id, end_id int
 
 	switch len(args) {
 	case 0:
 		who = PoolWhoMine
 		start_id = -1
 		end_id = -1
-		state = -1
 	case 3:
 		who = args[0]
 		start_id = args[1]
@@ -69,14 +68,14 @@ func NewImagePool(args ...int) (*ImagePool, error) {
 		return nil, errors.New("Wrong number of arguments")
 	}
 
-	response, err := client.Call("one.imagepool.info", who, start_id, end_id, state)
+	response, err := client.Call("one.imagepool.info", who, start_id, end_id)
 	if err != nil {
 		return nil, err
 	}
 
-	vmpool := &ImagePool{XMLResource{body: response.Body()}}
+	imagepool := &ImagePool{XMLResource{body: response.Body()}}
 
-	return vmpool, err
+	return imagepool, err
 
 }
 
