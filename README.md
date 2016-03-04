@@ -1,6 +1,6 @@
 # Docker Machine OpenNebula Driver
 
-This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing to create docker hosts on [OpenNebula](http://www.opennebula.org)
+This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing to create docker hosts on [OpenNebula](http://www.opennebula.org).
 
 ## Authors
 
