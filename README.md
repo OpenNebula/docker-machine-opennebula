@@ -4,7 +4,7 @@ This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
 
 ## Authors
 
-* Marco Mancini ([@km4rcus](https://github.com/km4rcus)
+* Marco Mancini ([@km4rcus](https://github.com/km4rcus))
 * Jaime Melis ([@jmelis](https://github.com/jmelis))
 
 ## Requirements
