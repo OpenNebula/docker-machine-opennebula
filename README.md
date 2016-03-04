@@ -83,7 +83,7 @@ $ docker-machine create --driver opennebula --opennebula-template-id $TEMPLATE_I
 
 Note that we cannot use `--opennebula-disk-resize` if we are using a template.
 
-### Boot2Docker vCenter
+### vCenter
 
 For the vCenter hypervisor, we recommend using Boot2Docker. You will need to follow these steps first:
 
@@ -94,6 +94,8 @@ For the vCenter hypervisor, we recommend using Boot2Docker. You will need to fol
   * New CD/DVD Drive (Datastore ISO File): select the Boot2Docker ISO. Make sure you check *Connect At Power On*.
   * New Hard disk: select the desired capacity for the Docker scratch data.
   * Do **not** specify a network, remove it if one was added automatically.
+
+**Note**: All the above steps will not be necessary in OpenNebula 5.0, as the new integration with the OpenNebula MarketPlace will automate that task in just a click!
 
 In OpenNebula, you will need to import the template and the desired networks, using the create Host dialog. Make sure you make the network type `ipv4`.
 
