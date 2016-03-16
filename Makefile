@@ -3,7 +3,7 @@ GODEP_BIN := $(GOPATH)/bin/godep
 default: build
 
 bin/docker-machine-driver-opennebula:
-	godep go build -o ./bin/docker-machine-driver-opennebula ./bin 
+	$(GODEP_BIN) go build -o ./bin/docker-machine-driver-opennebula ./bin 
 
 build: clean bin/docker-machine-driver-opennebula
 
