@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/OpenNebula/goca",
-			"Rev": "ccef2fe3b426852e49b97162e969504c355008c5"
+			"Rev": "d8d67f15d0843e054ece3452c9ab7ae55eb654a6"
 		},
 		{
 			"ImportPath": "github.com/docker/docker/pkg/term",

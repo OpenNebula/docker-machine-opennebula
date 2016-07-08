@@ -116,6 +116,9 @@ It is also necessary to specify the image to use by specifying `--opennebula-ima
 
 List of Options:
 
+* `--opennebula-user`: User identifier to authenticate with
+* `--opennebula-password`: User password or token
+* `--opennebula-xmlrpcurl`: XMLRPC endpoint
 * `--opennebula-cpu`: CPU value for the VM
 * `--opennebula-vcpu`: VCPUs for the VM
 * `--opennebula-memory`: Size of memory for VM in MB
@@ -135,6 +138,9 @@ List of Options:
 
 |          CLI Option          | Default Value |  Environment Variable  |
 | ---------------------------- | ------------- | ---------------------- |
+| `--opennebula-user`          |               | `ONE_USER`             |
+| `--opennebula-password`      |               | `ONE_PASSWORD`         |
+| `--opennebula-xmlrpcurl`     | `http://localhost:2633/RPC2`           | `ONE_XMLRPC`        |
 | `--opennebula-cpu`           | `1`           | `ONE_CPU`              |
 | `--opennebula-vcpu`          | `1`           | `ONE_VCPU`             |
 | `--opennebula-memory`        | `1024`        | `ONE_MEMORY`           |

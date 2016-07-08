@@ -24,6 +24,11 @@ const (
 	PoolWhoGroup = -1
 )
 
+type OneConfig struct {
+	Token     string
+	XmlrpcUrl string
+}
+
 type oneClient struct {
 	token             string
 	xmlrpcClient      *xmlrpc.Client
@@ -48,24 +53,24 @@ type XMLNode struct {
 	node *xmlpath.Node
 }
 
+func Client() *oneClient {
+	return client
+}
+
 func init() {
-	err := SetClient()
+	err := SetClient(NewConfig("", "", ""))
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func Client() *oneClient {
-	return client
-}
-
-func SetClient(args ...string) error {
+func NewConfig(user string, password string, xmlrpcUrl string) OneConfig {
 	var auth_token string
 	var one_auth_path string
 
-	if len(args) == 1 {
-		auth_token = args[0]
-	} else {
+	one_xmlrpc := xmlrpcUrl
+
+	if user == "" && password == "" {
 		one_auth_path = os.Getenv("ONE_AUTH")
 		if one_auth_path == "" {
 			one_auth_path = os.Getenv("HOME") + "/.one/one_auth"
@@ -77,17 +82,31 @@ func SetClient(args ...string) error {
 		} else {
 			auth_token = ""
 		}
+	} else {
+		auth_token = user + ":" + password
 	}
 
-	one_xmlrpc := os.Getenv("ONE_XMLRPC")
 	if one_xmlrpc == "" {
-		one_xmlrpc = "http://localhost:2633/RPC2"
+		one_xmlrpc = os.Getenv("ONE_XMLRPC")
+		if one_xmlrpc == "" {
+			one_xmlrpc = "http://localhost:2633/RPC2"
+		}
 	}
 
-	xmlrpcClient, xmlrpcClientError := xmlrpc.NewClient(one_xmlrpc, nil)
+	config := OneConfig{
+		Token:     auth_token,
+		XmlrpcUrl: one_xmlrpc,
+	}
+
+	return config
+}
+
+func SetClient(conf OneConfig) error {
+
+	xmlrpcClient, xmlrpcClientError := xmlrpc.NewClient(conf.XmlrpcUrl, nil)
 
 	client = &oneClient{
-		token:             auth_token,
+		token:             conf.Token,
 		xmlrpcClient:      xmlrpcClient,
 		xmlrpcClientError: xmlrpcClientError,
 	}

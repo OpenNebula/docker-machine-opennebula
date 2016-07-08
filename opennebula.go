@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/OpenNebula/goca"
+	"github.com/km4rcus/goca"
 	"github.com/docker/machine/libmachine/drivers"
 	"github.com/docker/machine/libmachine/log"
 	"github.com/docker/machine/libmachine/mcnflag"
@@ -32,6 +32,10 @@ type Driver struct {
 	DiskSize       string
 	ImageDevPrefix string
 	B2DSize        string
+        User	       string
+        Password       string
+        Xmlrpcurl      string
+        Config         goca.OneConfig
 	DisableVNC     bool
 }
 
@@ -92,6 +96,14 @@ func NewDriver(hostName, storePath string) *Driver {
 			StorePath:   storePath,
 		},
 	}
+}
+
+func (d *Driver) buildConfig() {
+        d.Config = goca.NewConfig(d.User, d.Password, d.Xmlrpcurl)
+}
+
+func (d *Driver) setClient() error {
+        return goca.SetClient(d.Config)	
 }
 
 // GetCreateFlags registers the flags this driver adds to
@@ -193,11 +205,31 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Usage:  "VNC is enabled by default. Disable it with this flag",
 			EnvVar: "ONE_DISABLE_VNC",
 		},
+                mcnflag.StringFlag{
+                        Name:   "opennebula-user",
+                        Usage:  "Set the user for authentication",
+                        EnvVar: "ONE_USER",
+                },
+                mcnflag.StringFlag{
+                        Name:   "opennebula-password",
+                        Usage:  "Set the password for authentication",
+                        EnvVar: "ONE_PASSWORD",
+                },
+                mcnflag.StringFlag{
+                        Name:   "opennebula-xmlrpcurl",
+                        Usage:  "Set the url for one xmlrpc server",
+                        EnvVar: "ONE_XMLRPC",
+                },
 	}
 }
 
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.SetSwarmConfigFromFlags(flags)
+
+        // Authentication
+        d.User = flags.String("opennebula-user")
+	d.Password = flags.String("opennebula-password")
+        d.Xmlrpcurl = flags.String("opennebula-xmlrpcurl")
 
 	// Capacity
 	d.CPU = flags.String("opennebula-cpu")
@@ -332,6 +364,10 @@ func (d *Driver) Create() error {
 		return err
 	}
 
+        // build config and set the xmlrpc client
+	d.buildConfig()
+	d.setClient()
+
 	// Create template
 	template := goca.NewTemplateBuilder()
 
@@ -464,6 +500,7 @@ func (d *Driver) GetURL() (string, error) {
 }
 
 func (d *Driver) GetIP() (string, error) {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return "", err
@@ -486,6 +523,7 @@ func (d *Driver) GetIP() (string, error) {
 }
 
 func (d *Driver) GetState() (state.State, error) {
+        d.setClient() 
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return state.None, err
@@ -584,6 +622,7 @@ func (d *Driver) GetState() (state.State, error) {
 }
 
 func (d *Driver) Start() error {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -623,6 +662,7 @@ func (d *Driver) Start() error {
 }
 
 func (d *Driver) Stop() error {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -637,6 +677,7 @@ func (d *Driver) Stop() error {
 }
 
 func (d *Driver) Remove() error {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -654,6 +695,7 @@ func (d *Driver) Remove() error {
 }
 
 func (d *Driver) Restart() error {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -668,6 +710,7 @@ func (d *Driver) Restart() error {
 }
 
 func (d *Driver) Kill() error {
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
