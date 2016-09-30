@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/km4rcus/goca"
+	"github.com/OpenNebula/goca"
 	"github.com/docker/machine/libmachine/drivers"
 	"github.com/docker/machine/libmachine/log"
 	"github.com/docker/machine/libmachine/mcnflag"
@@ -103,7 +103,7 @@ func (d *Driver) buildConfig() {
 }
 
 func (d *Driver) setClient() error {
-        return goca.SetClient(d.Config)	
+        return goca.SetClient(d.Config)
 }
 
 // GetCreateFlags registers the flags this driver adds to
@@ -523,7 +523,7 @@ func (d *Driver) GetIP() (string, error) {
 }
 
 func (d *Driver) GetState() (state.State, error) {
-        d.setClient() 
+        d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return state.None, err
