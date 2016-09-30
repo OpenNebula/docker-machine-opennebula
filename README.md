@@ -1,6 +1,6 @@
 # Docker Machine OpenNebula Driver
 
-This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing to create docker hosts on [OpenNebula](http://www.opennebula.org).
+This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing to create docker hosts on [OpenNebula](http://www.opennebula.org). This will allow the deployment of Docker Engines using Docker Machine using OpenNebula as the backend, from a client machine.
 
 ## Authors
 
@@ -9,8 +9,9 @@ This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
 
 ## Requirements
 
+* Docker CLI (the daemon is not required) must be installed in the client machine.
 * [Docker Machine](https://docs.docker.com/machine/) 0.5+
-* [OpenNebula](http://www.opennebula.org) 4.x+
+* Access to an [OpenNebula](http://www.opennebula.org) cloud 4.14+
 
 ## Installation
 
