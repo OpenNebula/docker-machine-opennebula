@@ -9,9 +9,9 @@ This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
 
 ## Requirements
 
-* Docker CLI (the daemon is not required) must be installed in the client machine.
-* [Docker Machine](https://docs.docker.com/machine/) 0.5+
-* Access to an [OpenNebula](http://www.opennebula.org) cloud 4.14+
+* Docker CLI (the daemon is not required) must be installed in the client machine. Tested with version 1.12.1.
+* [Docker Machine](https://docs.docker.com/machine/). Tested with version 0.8.1.
+* Access to an [OpenNebula](http://www.opennebula.org) Cloud. Tested with version 5.2.
 
 ## Installation
 
@@ -95,8 +95,6 @@ For the vCenter hypervisor, we recommend using Boot2Docker. You will need to fol
   * New CD/DVD Drive (Datastore ISO File): select the Boot2Docker ISO. Make sure you check *Connect At Power On*.
   * New Hard disk: select the desired capacity for the Docker scratch data.
   * Do **not** specify a network, remove it if one was added automatically.
-
-**Note**: All the above steps will not be necessary in OpenNebula 5.0, as the new integration with the OpenNebula MarketPlace will automate that task in just a click!
 
 In OpenNebula, you will need to import the template and the desired networks, using the create Host dialog. Make sure you make the network type `ipv4`.
 
