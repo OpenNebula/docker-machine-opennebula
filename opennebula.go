@@ -543,8 +543,7 @@ func (d *Driver) GetState() (state.State, error) {
 		return state.Starting, nil
 	case "ACTIVE":
 		switch lcm_state {
-		case
-			"RUNNING",
+		case "RUNNING",
 
 			// migration is considered running
 			"MIGRATE",
@@ -561,12 +560,11 @@ func (d *Driver) GetState() (state.State, error) {
 			"HOTPLUG_NIC",
 			"HOTPLUG_SAVEAS",
 			"DISK_SNAPSHOT",
-			"DISK_SNAPSHOT_DELETE",
+			"DISK_SNAPSHOT_DELETE":
 
 			return state.Running, nil
 
-		case
-			"LCM_INIT",
+		case "LCM_INIT",
 			"PROLOG",
 			"BOOT",
 			"PROLOG_RESUME",
@@ -576,12 +574,11 @@ func (d *Driver) GetState() (state.State, error) {
 			"BOOT_STOPPED",
 			"PROLOG_UNDEPLOY",
 			"BOOT_UNDEPLOY",
-			"PROLOG_MIGRATE_UNKNOWN",
+			"PROLOG_MIGRATE_UNKNOWN":
 
 			return state.Starting, nil
 
-		case
-			"HOTPLUG_SAVEAS_POWEROFF",
+		case "HOTPLUG_SAVEAS_POWEROFF",
 			"HOTPLUG_SAVEAS_SUSPENDED",
 			"HOTPLUG_PROLOG_POWEROFF",
 			"HOTPLUG_EPILOG_POWEROFF",
@@ -592,24 +589,21 @@ func (d *Driver) GetState() (state.State, error) {
 			"DISK_SNAPSHOT_DELETE_POWEROFF",
 			"DISK_SNAPSHOT_SUSPENDED",
 			"DISK_SNAPSHOT_REVERT_SUSPENDED",
-			"DISK_SNAPSHOT_DELETE_SUSPENDED",
+			"DISK_SNAPSHOT_DELETE_SUSPENDED":
 
 			return state.Stopped, nil
-		case
 
-			"SAVE_SUSPEND",
+		case "SAVE_SUSPEND",
 			"SAVE_STOP",
 			"EPILOG_STOP",
 			"EPILOG",
 			"SHUTDOWN",
 			"SHUTDOWN_POWEROFF",
-
 			"SHUTDOWN_UNDEPLOY",
-			"EPILOG_UNDEPLOY",
+			"EPILOG_UNDEPLOY":
 			return state.Stopping, nil
 
-		case
-			"UNKNOWN",
+		case "UNKNOWN",
 			"CLEANUP_DELETE",
 			"BOOT_FAILURE",
 			"BOOT_MIGRATE_FAILURE",
@@ -624,7 +618,7 @@ func (d *Driver) GetState() (state.State, error) {
 			"BOOT_STOPPED_FAILURE",
 			"PROLOG_RESUME_FAILURE",
 			"PROLOG_UNDEPLOY_FAILURE",
-			"PROLOG_MIGRATE_UNKNOWN_FAILURE",
+			"PROLOG_MIGRATE_UNKNOWN_FAILURE":
 
 			return state.Error, nil
 
