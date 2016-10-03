@@ -19,31 +19,31 @@ import (
 type Driver struct {
 	*drivers.BaseDriver
 	TemplateName   string
-	TemplateId     string
-	NetworkName    string
+	TemplateId	   string
+	NetworkName	   string
 	NetworkOwner   string
-	NetworkId      string
-	ImageName      string
-	ImageOwner     string
-	ImageId        string
-	CPU            string
-	VCPU           string
-	Memory         string
-	DiskSize       string
+	NetworkId	   string
+	ImageName	   string
+	ImageOwner	   string
+	ImageId		   string
+	CPU			   string
+	VCPU		   string
+	Memory		   string
+	DiskSize	   string
 	ImageDevPrefix string
-	B2DSize        string
-        User	       string
-        Password       string
-        Xmlrpcurl      string
-        Config         goca.OneConfig
-	DisableVNC     bool
+	B2DSize		   string
+	User		   string
+	Password	   string
+	Xmlrpcurl	   string
+	Config		   goca.OneConfig
+	DisableVNC	   bool
 }
 
 const (
 	defaultTimeout = 1 * time.Second
 	defaultSSHUser = "docker"
-	defaultCPU     = "1"
-	defaultVCPU    = "1"
+	defaultCPU	   = "1"
+	defaultVCPU	   = "1"
 	defaultMemory  = "1024"
 
 	// This is the contextualization script that will be executed by OpenNebula
@@ -91,19 +91,19 @@ chmod 600 $AUTH_FILE`
 func NewDriver(hostName, storePath string) *Driver {
 	return &Driver{
 		BaseDriver: &drivers.BaseDriver{
-			SSHUser:     defaultSSHUser,
+			SSHUser:	 defaultSSHUser,
 			MachineName: hostName,
-			StorePath:   storePath,
+			StorePath:	 storePath,
 		},
 	}
 }
 
 func (d *Driver) buildConfig() {
-        d.Config = goca.NewConfig(d.User, d.Password, d.Xmlrpcurl)
+	d.Config = goca.NewConfig(d.User, d.Password, d.Xmlrpcurl)
 }
 
 func (d *Driver) setClient() error {
-        return goca.SetClient(d.Config)
+	return goca.SetClient(d.Config)
 }
 
 // GetCreateFlags registers the flags this driver adds to
@@ -111,125 +111,125 @@ func (d *Driver) setClient() error {
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
 		mcnflag.StringFlag{
-			Name:   "opennebula-cpu",
-			Usage:  fmt.Sprintf("CPU value for the VM. Default: %d", defaultCPU),
+			Name:	"opennebula-cpu",
+			Usage:	fmt.Sprintf("CPU value for the VM. Default: %d", defaultCPU),
 			EnvVar: "ONE_CPU",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-vcpu",
-			Usage:  fmt.Sprintf("VCPUs for the VM. Default: %d", defaultVCPU),
+			Name:	"opennebula-vcpu",
+			Usage:	fmt.Sprintf("VCPUs for the VM. Default: %d", defaultVCPU),
 			EnvVar: "ONE_VCPU",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-memory",
-			Usage:  fmt.Sprintf("Size of memory for VM in MB. Default: %d", defaultMemory),
+			Name:	"opennebula-memory",
+			Usage:	fmt.Sprintf("Size of memory for VM in MB. Default: %d", defaultMemory),
 			EnvVar: "ONE_MEMORY",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-template-name",
-			Usage:  "Template to use",
+			Name:	"opennebula-template-name",
+			Usage:	"Template to use",
 			EnvVar: "ONE_TEMPLATE_NAME",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-template-id",
-			Usage:  "Template ID to use",
+			Name:	"opennebula-template-id",
+			Usage:	"Template ID to use",
 			EnvVar: "ONE_TEMPLATE_ID",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-network-name",
-			Usage:  "Network to connect the machine to",
+			Name:	"opennebula-network-name",
+			Usage:	"Network to connect the machine to",
 			EnvVar: "ONE_NETWORK_NAME",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-network-id",
-			Usage:  "Network ID to connect the machine to",
+			Name:	"opennebula-network-id",
+			Usage:	"Network ID to connect the machine to",
 			EnvVar: "ONE_NETWORK_ID",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-network-owner",
-			Usage:  "User ID of the Network to connect the machine to",
+			Name:	"opennebula-network-owner",
+			Usage:	"User ID of the Network to connect the machine to",
 			EnvVar: "ONE_NETWORK_OWNER",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-image-name",
-			Usage:  "Image to use as the OS",
+			Name:	"opennebula-image-name",
+			Usage:	"Image to use as the OS",
 			EnvVar: "ONE_IMAGE_NAME",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-image-id",
-			Usage:  "Image ID to use as the OS",
+			Name:	"opennebula-image-id",
+			Usage:	"Image ID to use as the OS",
 			EnvVar: "ONE_IMAGE_ID",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-image-owner",
-			Usage:  "Owner of the image to use as the OS",
+			Name:	"opennebula-image-owner",
+			Usage:	"Owner of the image to use as the OS",
 			EnvVar: "ONE_IMAGE_OWNER",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-dev-prefix",
-			Usage:  "Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...",
+			Name:	"opennebula-dev-prefix",
+			Usage:	"Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...",
 			EnvVar: "ONE_IMAGE_DEV_PREFIX",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-disk-resize",
-			Usage:  "Size of disk for VM in MB",
+			Name:	"opennebula-disk-resize",
+			Usage:	"Size of disk for VM in MB",
 			EnvVar: "ONE_DISK_SIZE",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-b2d-size",
-			Usage:  "Size of the Volatile disk in MB (only for b2d)",
+			Name:	"opennebula-b2d-size",
+			Usage:	"Size of the Volatile disk in MB (only for b2d)",
 			EnvVar: "ONE_B2D_DATA_SIZE",
-			Value:  "",
+			Value:	"",
 		},
 		mcnflag.StringFlag{
-			Name:   "opennebula-ssh-user",
-			Usage:  "Set the name of the SSH user",
+			Name:	"opennebula-ssh-user",
+			Usage:	"Set the name of the SSH user",
 			EnvVar: "ONE_SSH_USER",
-			Value:  defaultSSHUser,
+			Value:	defaultSSHUser,
 		},
 		mcnflag.BoolFlag{
-			Name:   "opennebula-disable-vnc",
-			Usage:  "VNC is enabled by default. Disable it with this flag",
+			Name:	"opennebula-disable-vnc",
+			Usage:	"VNC is enabled by default. Disable it with this flag",
 			EnvVar: "ONE_DISABLE_VNC",
 		},
-                mcnflag.StringFlag{
-                        Name:   "opennebula-user",
-                        Usage:  "Set the user for authentication",
-                        EnvVar: "ONE_USER",
-                },
-                mcnflag.StringFlag{
-                        Name:   "opennebula-password",
-                        Usage:  "Set the password for authentication",
-                        EnvVar: "ONE_PASSWORD",
-                },
-                mcnflag.StringFlag{
-                        Name:   "opennebula-xmlrpcurl",
-                        Usage:  "Set the url for one xmlrpc server",
-                        EnvVar: "ONE_XMLRPC",
-                },
+		mcnflag.StringFlag{
+				Name:	"opennebula-user",
+				Usage:	"Set the user for authentication",
+				EnvVar: "ONE_USER",
+		},
+		mcnflag.StringFlag{
+				Name:	"opennebula-password",
+				Usage:	"Set the password for authentication",
+				EnvVar: "ONE_PASSWORD",
+		},
+		mcnflag.StringFlag{
+				Name:	"opennebula-xmlrpcurl",
+				Usage:	"Set the url for one xmlrpc server",
+				EnvVar: "ONE_XMLRPC",
+		},
 	}
 }
 
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.SetSwarmConfigFromFlags(flags)
 
-        // Authentication
-        d.User = flags.String("opennebula-user")
+		// Authentication
+		d.User = flags.String("opennebula-user")
 	d.Password = flags.String("opennebula-password")
-        d.Xmlrpcurl = flags.String("opennebula-xmlrpcurl")
+		d.Xmlrpcurl = flags.String("opennebula-xmlrpcurl")
 
 	// Capacity
 	d.CPU = flags.String("opennebula-cpu")
@@ -348,7 +348,7 @@ func (d *Driver) PreCreateCheck() error {
 
 func (d *Driver) Create() error {
 	var (
-		vector     *goca.TemplateBuilderVector
+		vector	   *goca.TemplateBuilderVector
 		vmtemplate *goca.Template
 
 		err error
@@ -364,7 +364,7 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-        // build config and set the xmlrpc client
+	// build config and set the xmlrpc client
 	d.buildConfig()
 	d.setClient()
 
@@ -375,7 +375,6 @@ func (d *Driver) Create() error {
 		// Template has been specified
 	} else {
 		// Template has NOT been specified
-
 		template.AddValue("NAME", d.MachineName)
 
 		// OS Disk
@@ -453,7 +452,7 @@ func (d *Driver) Create() error {
 	vector.AddValue("START_SCRIPT_BASE64", contextScript64)
 
 	// Instantiate
-	log.Infof("Starting  VM...")
+	log.Infof("Starting	 VM...")
 
 	if d.TemplateName != "" || d.TemplateId != "" {
 
@@ -500,7 +499,7 @@ func (d *Driver) GetURL() (string, error) {
 }
 
 func (d *Driver) GetIP() (string, error) {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return "", err
@@ -523,7 +522,7 @@ func (d *Driver) GetIP() (string, error) {
 }
 
 func (d *Driver) GetState() (state.State, error) {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return state.None, err
@@ -540,61 +539,78 @@ func (d *Driver) GetState() (state.State, error) {
 	}
 
 	switch vm_state {
-	case "INIT", "PENDING", "HOLD":
+	case "INIT", "PENDING", "HOLD", "CLONING":
 		return state.Starting, nil
 	case "ACTIVE":
 		switch lcm_state {
-		case "RUNNING",
-			"DISK_SNAPSHOT",
-			"DISK_SNAPSHOT_REVERT",
-			"DISK_SNAPSHOT_DELETE",
+		case
+			"RUNNING",
+
+			// migration is considered running
+			"MIGRATE",
+			"SAVE_MIGRATE",
+			"PROLOG_MIGRATE",
+			"BOOT_MIGRATE",
+
+			// recover --recreate is also considered running
+			"CLEANUP_RESUBMIT",
+
+			// operation on the VMs
 			"HOTPLUG",
 			"HOTPLUG_SNAPSHOT",
 			"HOTPLUG_NIC",
-			"HOTPLUG_SAVEAS":
+			"HOTPLUG_SAVEAS",
+			"DISK_SNAPSHOT",
+			"DISK_SNAPSHOT_DELETE",
+
 			return state.Running, nil
-		case "PROLOG",
+
+		case
+			"LCM_INIT",
+			"PROLOG",
 			"BOOT",
-			"MIGRATE",
-			"PROLOG_MIGRATE",
 			"PROLOG_RESUME",
-			"CLEANUP_RESUBMIT",
 			"BOOT_UNKNOWN",
 			"BOOT_POWEROFF",
 			"BOOT_SUSPENDED",
 			"BOOT_STOPPED",
 			"PROLOG_UNDEPLOY",
 			"BOOT_UNDEPLOY",
-			"BOOT_MIGRATE",
-			"PROLOG_MIGRATE_SUSPEND",
-			"SAVE_MIGRATE":
+			"PROLOG_MIGRATE_UNKNOWN",
+
 			return state.Starting, nil
-		case "HOTPLUG_SAVEAS_POWEROFF",
-			"DISK_SNAPSHOT_POWEROFF",
-			"DISK_SNAPSHOT_REVERT_POWEROFF",
-			"DISK_SNAPSHOT_DELETE_POWEROFF",
+
+		case
+			"HOTPLUG_SAVEAS_POWEROFF",
+			"HOTPLUG_SAVEAS_SUSPENDED",
 			"HOTPLUG_PROLOG_POWEROFF",
 			"HOTPLUG_EPILOG_POWEROFF",
 			"PROLOG_MIGRATE_POWEROFF",
-			"SAVE_STOP":
-			return state.Stopped, nil
-		case "HOTPLUG_SAVEAS_SUSPENDED",
+			"PROLOG_MIGRATE_SUSPEND",
+			"DISK_SNAPSHOT_POWEROFF",
+			"DISK_SNAPSHOT_REVERT_POWEROFF",
+			"DISK_SNAPSHOT_DELETE_POWEROFF",
 			"DISK_SNAPSHOT_SUSPENDED",
 			"DISK_SNAPSHOT_REVERT_SUSPENDED",
-			"DISK_SNAPSHOT_DELETE_SUSPENDED":
-			return state.Saved, nil
-		case "EPILOG_STOP",
-			"EPILOG",
-			"SHUTDOWN_UNDEPLOY",
-			"EPILOG_UNDEPLOY",
+			"DISK_SNAPSHOT_DELETE_SUSPENDED",
+
+			return state.Stopped, nil
+		case
+
 			"SAVE_SUSPEND",
+			"SAVE_STOP",
+			"EPILOG_STOP",
+			"EPILOG",
 			"SHUTDOWN",
 			"SHUTDOWN_POWEROFF",
-			"CANCEL",
-			"CLEANUP_DELETE":
+
+			"SHUTDOWN_UNDEPLOY",
+			"EPILOG_UNDEPLOY",
 			return state.Stopping, nil
-		case "UNKNOWN",
-			"FAILURE",
+
+		case
+			"UNKNOWN",
+			"CLEANUP_DELETE",
 			"BOOT_FAILURE",
 			"BOOT_MIGRATE_FAILURE",
 			"PROLOG_MIGRATE_FAILURE",
@@ -607,14 +623,18 @@ func (d *Driver) GetState() (state.State, error) {
 			"BOOT_UNDEPLOY_FAILURE",
 			"BOOT_STOPPED_FAILURE",
 			"PROLOG_RESUME_FAILURE",
-			"PROLOG_UNDEPLOY_FAILURE":
+			"PROLOG_UNDEPLOY_FAILURE",
+			"PROLOG_MIGRATE_UNKNOWN_FAILURE",
+
 			return state.Error, nil
+
 		}
+
 	case "POWEROFF", "UNDEPLOYED":
 		return state.Stopped, nil
 	case "STOPPED", "SUSPENDED":
 		return state.Saved, nil
-	case "DONE", "FAILED":
+	case "DONE", "FAILED", "CLONING_FAILURE":
 		return state.Error, nil
 	}
 
@@ -622,7 +642,7 @@ func (d *Driver) GetState() (state.State, error) {
 }
 
 func (d *Driver) Start() error {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -662,13 +682,13 @@ func (d *Driver) Start() error {
 }
 
 func (d *Driver) Stop() error {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
 	}
 
-	err = vm.PowerOff()
+	err = vm.Poweroff()
 	if err != nil {
 		return err
 	}
@@ -677,25 +697,22 @@ func (d *Driver) Stop() error {
 }
 
 func (d *Driver) Remove() error {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
 	}
 
-	err = vm.ShutdownHard()
+	err = vm.TerminateHard()
 	if err != nil {
-		err = vm.Delete()
-		if err != nil {
-			return err
-		}
+		return err
 	}
 
 	return nil
 }
 
 func (d *Driver) Restart() error {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
@@ -710,13 +727,13 @@ func (d *Driver) Restart() error {
 }
 
 func (d *Driver) Kill() error {
-        d.setClient()
+	d.setClient()
 	vm, err := goca.NewVMFromName(d.MachineName)
 	if err != nil {
 		return err
 	}
 
-	err = vm.PowerOffHard()
+	err = vm.PoweroffHard()
 	if err != nil {
 		return err
 	}
