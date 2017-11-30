@@ -240,6 +240,8 @@ This has been tested
 Please work from: https://docs.docker.com/get-started/part4/#create-a-cluster
 If you have discovery issues, please check your *multicast support* is OK.
 
+As long as your VM template includes only *one* network, you should not even need to give --advertise-addr or --listen-addr
+
 ### rancher
 
 (Tested, working)
