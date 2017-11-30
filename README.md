@@ -227,14 +227,14 @@ If you don't specify neither `--opennebula-template-id` nor `--opennebula-templa
 
 ## Using with schedulers
 
-### swarm (old)
+### Swarm (old)
 (Tested, working)
 (external) docker swarm is covered on the OpenNebula blog:
 https://opennebula.org/docker-swarm-with-opennebula/
 
 This has been tested
 
-### swarmkit
+### Swarmkit / Swarm mode
 
 (Tested, working)
 Please work from: https://docs.docker.com/get-started/part4/#create-a-cluster
