@@ -223,3 +223,36 @@ Note that:
 ## Not Using a Template
 
 If you don't specify neither `--opennebula-template-id` nor `--opennebula-template-name`, then you **must** specify the image: `--opennebula-image-*`, and the network: `--opennebula-network-*`, and optionally the other parameters.
+
+
+## Using with schedulers
+
+### swarm (old)
+(Tested, working)
+(external) docker swarm is covered on the OpenNebula blog:
+https://opennebula.org/docker-swarm-with-opennebula/
+
+This has been tested
+
+### swarmkit
+
+(Tested, working)
+Please work from: https://docs.docker.com/get-started/part4/#create-a-cluster
+If you have discovery issues, please check your *multicast support* is OK.
+
+### rancher
+
+(Tested, working)
+https://opennebula.org/managing-docker-hosts-deployments-with-rancher-and-opennebula/
+
+
+### k8s
+
+Unfortunately there is no documentation for this, yet.
+It is not known if it has been tested.
+
+
+### Autoscaling via OneFlow
+
+(Tested, working)
+A documentation link is missing.
