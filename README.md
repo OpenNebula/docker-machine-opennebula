@@ -31,7 +31,13 @@ After the build is complete, `bin/docker-machine-driver-opennebula` binary will 
 
 Official documentation for Docker Machine [is available here](https://docs.docker.com/machine/).
 
-Set up `ONE_AUTH` and `ONE_XMLRPC` to point to the OpenNebula cloud.
+Set up a user to use for docker-machine with OpenNebula, give it permissions to create / manage instances.
+Set up env variables `ONE_AUTH` to contain `user:password` and `ONE_XMLRPC` to point to the OpenNebula cloud.
+
+```
+export ONE_AUTH=~/.one/one_auth
+export ONE_XMLRPC=https://<ONE FRONTEND>:2633/RPC2
+```
 
 There are two ways to define the Docker Engines with this plugin: either by specifying a template registered in OpenNebula, or by specifying all the required attributes to create it dynamically. At the end of this guide there is a comprehensive guide on the specific options you can use, and in what combination, for both cases.
 
@@ -47,10 +53,10 @@ $ docker-machine create --driver opennebula --opennebula-network-name $NETWORK_N
 
 Remember to use `--opennebula-b2d-size` in this case (only for Boot2Docker without a template).
 
-Or create a template that references the b2d image, an additional volatile disk and a network, and use it:
+Or create a template that references the b2d image, an __additional volatile disk__ and a __network__, and use it:
 
 ```bash
-$ docker-machine create --driver opennebula --opennebula-template-id $TEMPLATE_ID b2dFromTemplate
+$ docker-machine create --driver opennebula --opennebula-template-name boot2docker b2dFromTemplate
 ```
 
 Note that we cannot use `--opennebula-b2d-size` if we are using a template.
@@ -82,7 +88,7 @@ Or create a template that references that image and network, and use it:
 $ docker-machine create --driver opennebula --opennebula-template-id $TEMPLATE_ID b2dFromTemplate
 ```
 
-Note that we cannot use `--opennebula-disk-resize` if we are using a template.
+Note that we _cannot_ use `--opennebula-disk-resize` if we are using a template.
 
 ### vCenter
 
@@ -101,7 +107,7 @@ In OpenNebula, you will need to import the template and the desired networks, us
 Once you have fulfilled these pre-requisites you can now launch your docker-engine:
 
 ```bash
-$ docker-machine create --driver opennebula --opennebula-template-id $TEMPLATE_ID --opennebua-network-id $NETWORK_ID b2d
+$ docker-machine create --driver opennebula --opennebula-template-id $TEMPLATE_ID --opennebula-network-id $NETWORK_ID b2d
 
 ```
 
