@@ -724,12 +724,7 @@ func (d *Driver) Kill() error {
 		return err
 	}
 
-	err = vm.PoweroffHard()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return vm.PoweroffHard()
 }
 
 func (d *Driver) publicSSHKeyPath() string {
