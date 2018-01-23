@@ -19,31 +19,31 @@ import (
 type Driver struct {
 	*drivers.BaseDriver
 	TemplateName   string
-	TemplateId	   string
-	NetworkName	   string
+	TemplateId     string
+	NetworkName    string
 	NetworkOwner   string
-	NetworkId	   string
-	ImageName	   string
-	ImageOwner	   string
-	ImageId		   string
-	CPU			   string
-	VCPU		   string
-	Memory		   string
-	DiskSize	   string
+	NetworkId      string
+	ImageName      string
+	ImageOwner     string
+	ImageId        string
+	CPU            string
+	VCPU           string
+	Memory         string
+	DiskSize       string
 	ImageDevPrefix string
-	B2DSize		   string
-	User		   string
-	Password	   string
-	Xmlrpcurl	   string
-	Config		   goca.OneConfig
-	DisableVNC	   bool
+	B2DSize        string
+	User           string
+	Password       string
+	Xmlrpcurl      string
+	Config         goca.OneConfig
+	DisableVNC     bool
 }
 
 const (
 	defaultTimeout = 1 * time.Second
 	defaultSSHUser = "docker"
-	defaultCPU	   = "1"
-	defaultVCPU	   = "1"
+	defaultCPU     = "1"
+	defaultVCPU    = "1"
 	defaultMemory  = "1024"
 
 	// This is the contextualization script that will be executed by OpenNebula
@@ -91,9 +91,9 @@ chmod 600 $AUTH_FILE`
 func NewDriver(hostName, storePath string) *Driver {
 	return &Driver{
 		BaseDriver: &drivers.BaseDriver{
-			SSHUser:	 defaultSSHUser,
+			SSHUser:     defaultSSHUser,
 			MachineName: hostName,
-			StorePath:	 storePath,
+			StorePath:   storePath,
 		},
 	}
 }
@@ -111,114 +111,114 @@ func (d *Driver) setClient() error {
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
 		mcnflag.StringFlag{
-			Name:	"opennebula-cpu",
-			Usage:	fmt.Sprintf("CPU value for the VM. Default: %d", defaultCPU),
+			Name:   "opennebula-cpu",
+			Usage:  fmt.Sprintf("CPU value for the VM. Default: %d", defaultCPU),
 			EnvVar: "ONE_CPU",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-vcpu",
-			Usage:	fmt.Sprintf("VCPUs for the VM. Default: %d", defaultVCPU),
+			Name:   "opennebula-vcpu",
+			Usage:  fmt.Sprintf("VCPUs for the VM. Default: %d", defaultVCPU),
 			EnvVar: "ONE_VCPU",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-memory",
-			Usage:	fmt.Sprintf("Size of memory for VM in MB. Default: %d", defaultMemory),
+			Name:   "opennebula-memory",
+			Usage:  fmt.Sprintf("Size of memory for VM in MB. Default: %d", defaultMemory),
 			EnvVar: "ONE_MEMORY",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-template-name",
-			Usage:	"Template to use",
+			Name:   "opennebula-template-name",
+			Usage:  "Template to use",
 			EnvVar: "ONE_TEMPLATE_NAME",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-template-id",
-			Usage:	"Template ID to use",
+			Name:   "opennebula-template-id",
+			Usage:  "Template ID to use",
 			EnvVar: "ONE_TEMPLATE_ID",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-network-name",
-			Usage:	"Network to connect the machine to",
+			Name:   "opennebula-network-name",
+			Usage:  "Network to connect the machine to",
 			EnvVar: "ONE_NETWORK_NAME",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-network-id",
-			Usage:	"Network ID to connect the machine to",
+			Name:   "opennebula-network-id",
+			Usage:  "Network ID to connect the machine to",
 			EnvVar: "ONE_NETWORK_ID",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-network-owner",
-			Usage:	"User ID of the Network to connect the machine to",
+			Name:   "opennebula-network-owner",
+			Usage:  "User ID of the Network to connect the machine to",
 			EnvVar: "ONE_NETWORK_OWNER",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-image-name",
-			Usage:	"Image to use as the OS",
+			Name:   "opennebula-image-name",
+			Usage:  "Image to use as the OS",
 			EnvVar: "ONE_IMAGE_NAME",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-image-id",
-			Usage:	"Image ID to use as the OS",
+			Name:   "opennebula-image-id",
+			Usage:  "Image ID to use as the OS",
 			EnvVar: "ONE_IMAGE_ID",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-image-owner",
-			Usage:	"Owner of the image to use as the OS",
+			Name:   "opennebula-image-owner",
+			Usage:  "Owner of the image to use as the OS",
 			EnvVar: "ONE_IMAGE_OWNER",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-dev-prefix",
-			Usage:	"Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...",
+			Name:   "opennebula-dev-prefix",
+			Usage:  "Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...",
 			EnvVar: "ONE_IMAGE_DEV_PREFIX",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-disk-resize",
-			Usage:	"Size of disk for VM in MB",
+			Name:   "opennebula-disk-resize",
+			Usage:  "Size of disk for VM in MB",
 			EnvVar: "ONE_DISK_SIZE",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-b2d-size",
-			Usage:	"Size of the Volatile disk in MB (only for b2d)",
+			Name:   "opennebula-b2d-size",
+			Usage:  "Size of the Volatile disk in MB (only for b2d)",
 			EnvVar: "ONE_B2D_DATA_SIZE",
-			Value:	"",
+			Value:  "",
 		},
 		mcnflag.StringFlag{
-			Name:	"opennebula-ssh-user",
-			Usage:	"Set the name of the SSH user",
+			Name:   "opennebula-ssh-user",
+			Usage:  "Set the name of the SSH user",
 			EnvVar: "ONE_SSH_USER",
-			Value:	defaultSSHUser,
+			Value:  defaultSSHUser,
 		},
 		mcnflag.BoolFlag{
-			Name:	"opennebula-disable-vnc",
-			Usage:	"VNC is enabled by default. Disable it with this flag",
+			Name:   "opennebula-disable-vnc",
+			Usage:  "VNC is enabled by default. Disable it with this flag",
 			EnvVar: "ONE_DISABLE_VNC",
 		},
 		mcnflag.StringFlag{
-				Name:	"opennebula-user",
-				Usage:	"Set the user for authentication",
-				EnvVar: "ONE_USER",
+			Name:   "opennebula-user",
+			Usage:  "Set the user for authentication",
+			EnvVar: "ONE_USER",
 		},
 		mcnflag.StringFlag{
-				Name:	"opennebula-password",
-				Usage:	"Set the password for authentication",
-				EnvVar: "ONE_PASSWORD",
+			Name:   "opennebula-password",
+			Usage:  "Set the password for authentication",
+			EnvVar: "ONE_PASSWORD",
 		},
 		mcnflag.StringFlag{
-				Name:	"opennebula-xmlrpcurl",
-				Usage:	"Set the url for one xmlrpc server",
-				EnvVar: "ONE_XMLRPC",
+			Name:   "opennebula-xmlrpcurl",
+			Usage:  "Set the url for one xmlrpc server",
+			EnvVar: "ONE_XMLRPC",
 		},
 	}
 }
@@ -226,10 +226,10 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.SetSwarmConfigFromFlags(flags)
 
-		// Authentication
-		d.User = flags.String("opennebula-user")
+	// Authentication
+	d.User = flags.String("opennebula-user")
 	d.Password = flags.String("opennebula-password")
-		d.Xmlrpcurl = flags.String("opennebula-xmlrpcurl")
+	d.Xmlrpcurl = flags.String("opennebula-xmlrpcurl")
 
 	// Capacity
 	d.CPU = flags.String("opennebula-cpu")
@@ -348,7 +348,7 @@ func (d *Driver) PreCreateCheck() error {
 
 func (d *Driver) Create() error {
 	var (
-		vector	   *goca.TemplateBuilderVector
+		vector     *goca.TemplateBuilderVector
 		vmtemplate *goca.Template
 
 		err error
