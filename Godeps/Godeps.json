@@ -1,51 +1,51 @@
 {
 	"ImportPath": "github.com/OpenNebula/docker-machine-opennebula",
-	"GoVersion": "go1.7",
-	"GodepVersion": "v74",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
 	"Deps": [
 		{
 			"ImportPath": "github.com/OpenNebula/goca",
-			"Rev": "12ac22a6c745ec7bf7745174698ca068781fa589"
+			"Rev": "39640cef9bfb9058b2aeb437aa05b1be1b8e4f35"
 		},
 		{
 			"ImportPath": "github.com/docker/docker/pkg/term",
-			"Comment": "docs-v1.12.0-rc4-2016-07-15-1901-g675e622",
+			"Comment": "docs-v1.12.0-rc4-2016-07-15-1901-g675e62243",
 			"Rev": "675e6224329dd46a8e5e52d7035da88fc97def94"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/log",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnflag",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnutils",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/ssh",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/state",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/version",
-			"Comment": "docs-v0.8.2-2016-09-26-11-g91e368e",
-			"Rev": "91e368eb7422665278b1d5665139ee0f9980b588"
+			"Comment": "docs-v0.8.2-2016-09-26-292-g49dfaa70",
+			"Rev": "49dfaa70fdc869c65d9f6c50c355624356ab383b"
 		},
 		{
 			"ImportPath": "github.com/kolo/xmlrpc",
@@ -53,20 +53,39 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
+			"Rev": "39efaea5da11abd5e2b90a435b1f338cdb94619c"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519",
+			"Rev": "39efaea5da11abd5e2b90a435b1f338cdb94619c"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"Rev": "39efaea5da11abd5e2b90a435b1f338cdb94619c"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
+			"Rev": "39efaea5da11abd5e2b90a435b1f338cdb94619c"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "1f22c0103821b9390939b6776727195525381532"
+			"Rev": "39efaea5da11abd5e2b90a435b1f338cdb94619c"
 		},
 		{
-			"ImportPath": "launchpad.net/xmlpath",
-			"Comment": "4",
-			"Rev": "gustavo@niemeyer.net-20130614043138-kasci7s9kddz0e5v"
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "0744d001aa8470aaa53df28d32e5ceeb8af9bd70"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "0744d001aa8470aaa53df28d32e5ceeb8af9bd70"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "4fe5d7925040acd225bf9c7cee65e82d07f06bff"
+		},
+		{
+			"ImportPath": "gopkg.in/xmlpath.v2",
+			"Rev": "860cbeca3ebcc600db0b213c0e83ad6ce91f5739"
 		}
 	]
 }
