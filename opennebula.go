@@ -19,13 +19,13 @@ import (
 type Driver struct {
 	*drivers.BaseDriver
 	TemplateName   string
-	TemplateId     string
+	TemplateID     string
 	NetworkName    string
 	NetworkOwner   string
-	NetworkId      string
+	NetworkID      string
 	ImageName      string
 	ImageOwner     string
-	ImageId        string
+	ImageID        string
 	CPU            string
 	VCPU           string
 	Memory         string
@@ -178,7 +178,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 		},
 		mcnflag.StringFlag{
 			Name:   "opennebula-dev-prefix",
-			Usage:  "Dev prefix to use for the images: 'vd', 'sd', 'hd', etc...",
+			Usage:  "Dev prefix to use for the images: 'vd', 'sd', 'hd', etc..",
 			EnvVar: "ONE_IMAGE_DEV_PREFIX",
 			Value:  "",
 		},
@@ -238,15 +238,15 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 
 	// Template
 	d.TemplateName = flags.String("opennebula-template-name")
-	d.TemplateId = flags.String("opennebula-template-id")
+	d.TemplateID = flags.String("opennebula-template-id")
 
 	// Network
 	d.NetworkName = flags.String("opennebula-network-name")
-	d.NetworkId = flags.String("opennebula-network-id")
+	d.NetworkID = flags.String("opennebula-network-id")
 	d.NetworkOwner = flags.String("opennebula-network-owner")
 
 	// Storage
-	d.ImageId = flags.String("opennebula-image-id")
+	d.ImageID = flags.String("opennebula-image-id")
 	d.ImageName = flags.String("opennebula-image-name")
 	d.ImageOwner = flags.String("opennebula-image-owner")
 
@@ -260,57 +260,57 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	// VNC
 	d.DisableVNC = flags.Bool("opennebula-disable-vnc")
 
-	// Either TemplateName or TemplateId
-	if d.TemplateName != "" && d.TemplateId != "" {
-		return errors.New("Please specify only one of: --opennebula-template-name or --opennebula-template-id, not both.")
+	// Either TemplateName or TemplateID
+	if d.TemplateName != "" && d.TemplateID != "" {
+		return errors.New("specify only one of: --opennebula-template-name or --opennebula-template-id, not both")
 	}
 
-	// Either NetworkName or NetworkId
-	if d.NetworkName != "" && d.NetworkId != "" {
-		return errors.New("Please specify only one of: --opennebula-network-name or --opennebula-network-id, not both.")
+	// Either NetworkName or NetworkID
+	if d.NetworkName != "" && d.NetworkID != "" {
+		return errors.New("specify only one of: --opennebula-network-name or --opennebula-network-id, not both")
 	}
 
-	// Either ImageName or ImageId
-	if d.ImageName != "" && d.ImageId != "" {
-		return errors.New("Please specify only one of: --opennebula-image-name or --opennebula-image-id, not both.")
+	// Either ImageName or ImageID
+	if d.ImageName != "" && d.ImageID != "" {
+		return errors.New("specify only one of: --opennebula-image-name or --opennebula-image-id, not both")
 	}
 
 	// Required and incompatible options for Template
-	if d.TemplateName != "" || d.TemplateId != "" {
+	if d.TemplateName != "" || d.TemplateID != "" {
 		// Template has been specified:
 
-		// ImageName and ImageId are incompatible
-		if d.ImageName != "" || d.ImageId != "" {
-			return errors.New("The options --opennebula-image-* are incompatible with --opennebula-template-*.")
+		// ImageName and ImageID are incompatible
+		if d.ImageName != "" || d.ImageID != "" {
+			return errors.New("options --opennebula-image-* are incompatible with --opennebula-template-*")
 		}
 
 		// ImageDevPrefix is incompatible
 		if d.ImageDevPrefix != "" {
-			return errors.New("The option: --opennebula-dev-prefix is incompatible with --opennebula-template-*.")
+			return errors.New("option: --opennebula-dev-prefix is incompatible with --opennebula-template-*")
 		}
 		// DiskSize is incompatible
 		if d.DiskSize != "" {
-			return errors.New("The option: --opennebula-disk-resize is incompatible with --opennebula-template-*.")
+			return errors.New("option: --opennebula-disk-resize is incompatible with --opennebula-template-*")
 		}
 		// B2DSize is incompatible
 		if d.B2DSize != "" {
-			return errors.New("The option: --opennebula-disk-resize is incompatible with --opennebula-template-*.")
+			return errors.New("option: --opennebula-disk-resize is incompatible with --opennebula-template-*")
 		}
 		// DisableVNC is incompatible
 		if d.DisableVNC {
-			return errors.New("The option: --opennebula-disable-vnc is incompatible with --opennebula-template-*.")
+			return errors.New("option: --opennebula-disable-vnc is incompatible with --opennebula-template-*")
 		}
 	} else {
 		//Template has NOT been specified:
 
-		// ImageName or ImageId is required
-		if d.ImageName == "" && d.ImageId == "" {
-			return errors.New("Please specify a image to use as the OS with --opennebula-image-name or --opennebula-image-id.")
+		// ImageName or ImageID is required
+		if d.ImageName == "" && d.ImageID == "" {
+			return errors.New("specify a image to use as the OS with --opennebula-image-name or --opennebula-image-id")
 		}
 
-		// NetworkName or NetworkId is required
-		if d.NetworkName == "" && d.NetworkId == "" {
-			return errors.New("Please specify a network to connect to with --opennebula-network-name or --opennebula-network-id.")
+		// NetworkName or NetworkID is required
+		if d.NetworkName == "" && d.NetworkID == "" {
+			return errors.New("specify a network to connect to with --opennebula-network-name or --opennebula-network-id")
 		}
 
 		// Assign default capacity values
@@ -354,7 +354,7 @@ func (d *Driver) Create() error {
 		err error
 	)
 
-	log.Infof("Creating SSH key...")
+	log.Infof("Creating SSH key..")
 	if err := ssh.GenerateSSHKey(d.GetSSHKeyPath()); err != nil {
 		return err
 	}
@@ -371,7 +371,7 @@ func (d *Driver) Create() error {
 	// Create template
 	template := goca.NewTemplateBuilder()
 
-	if d.TemplateName != "" || d.TemplateId != "" {
+	if d.TemplateName != "" || d.TemplateID != "" {
 		// Template has been specified
 	} else {
 		// Template has NOT been specified
@@ -380,8 +380,8 @@ func (d *Driver) Create() error {
 		// OS Disk
 		vector = template.NewVector("DISK")
 
-		if d.ImageId != "" {
-			vector.AddValue("IMAGE_ID", d.ImageId)
+		if d.ImageID != "" {
+			vector.AddValue("IMAGE_ID", d.ImageID)
 		} else {
 			vector.AddValue("IMAGE", d.ImageName)
 			if d.ImageOwner != "" {
@@ -427,7 +427,7 @@ func (d *Driver) Create() error {
 	}
 
 	// Network
-	if d.NetworkName != "" || d.NetworkId != "" {
+	if d.NetworkName != "" || d.NetworkID != "" {
 		vector = template.NewVector("NIC")
 
 		if d.NetworkName != "" {
@@ -437,8 +437,8 @@ func (d *Driver) Create() error {
 			}
 		}
 
-		if d.NetworkId != "" {
-			vector.AddValue("NETWORK_ID", d.NetworkId)
+		if d.NetworkID != "" {
+			vector.AddValue("NETWORK_ID", d.NetworkID)
 		}
 	}
 
@@ -452,9 +452,9 @@ func (d *Driver) Create() error {
 	vector.AddValue("START_SCRIPT_BASE64", contextScript64)
 
 	// Instantiate
-	log.Infof("Starting	 VM...")
+	log.Infof("Starting	 VM..")
 
-	if d.TemplateName != "" || d.TemplateId != "" {
+	if d.TemplateName != "" || d.TemplateID != "" {
 
 		if d.TemplateName != "" {
 			vmtemplate, err = goca.NewTemplateFromName(d.TemplateName)
@@ -462,11 +462,11 @@ func (d *Driver) Create() error {
 				return err
 			}
 		} else {
-			templateId, err := strconv.Atoi(d.TemplateId)
+			templateID, err := strconv.Atoi(d.TemplateID)
 			if err != nil {
 				return err
 			}
-			vmtemplate = goca.NewTemplate(uint(templateId))
+			vmtemplate = goca.NewTemplate(uint(templateID))
 		}
 
 		_, err = vmtemplate.Instantiate(d.MachineName, false, template.String())
@@ -483,11 +483,7 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	if err := d.Start(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Start()
 }
 
 func (d *Driver) GetURL() (string, error) {
@@ -533,16 +529,16 @@ func (d *Driver) GetState() (state.State, error) {
 		return state.None, err
 	}
 
-	vm_state, lcm_state, err := vm.StateString()
+	vmState, lcmState, err := vm.StateString()
 	if err != nil {
 		return state.None, err
 	}
 
-	switch vm_state {
+	switch vmState {
 	case "INIT", "PENDING", "HOLD", "CLONING":
 		return state.Starting, nil
 	case "ACTIVE":
-		switch lcm_state {
+		switch lcmState {
 		case "RUNNING",
 
 			// migration is considered running
@@ -654,7 +650,7 @@ func (d *Driver) Start() error {
 		switch s {
 		case state.Running:
 		case state.Error:
-			return errors.New("VM in error state")
+			return errors.New("vM in error state")
 		default:
 			time.Sleep(2 * time.Second)
 		}
@@ -666,13 +662,10 @@ func (d *Driver) Start() error {
 		}
 	}
 
-	log.Infof("Waiting for SSH...")
-	// Wait for SSH over NAT to be available before returning to user
-	if err := drivers.WaitForSSH(d); err != nil {
-		return err
-	}
+	log.Infof("Waiting for SSH..")
 
-	return nil
+	// Wait for SSH over NAT to be available before returning to user
+	return drivers.WaitForSSH(d)
 }
 
 func (d *Driver) Stop() error {
