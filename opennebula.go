@@ -377,6 +377,10 @@ func (d *Driver) Create() error {
 		// Template has NOT been specified
 		template.AddValue("NAME", d.MachineName)
 
+		// OS Boot
+		vector = template.NewVector("OS")
+		vector.AddValue("BOOT", "disk0")
+
 		// OS Disk
 		vector = template.NewVector("DISK")
 
