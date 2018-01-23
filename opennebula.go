@@ -103,6 +103,7 @@ func (d *Driver) buildConfig() {
 }
 
 func (d *Driver) setClient() error {
+	d.buildConfig()
 	return goca.SetClient(d.Config)
 }
 
@@ -354,6 +355,9 @@ func (d *Driver) Create() error {
 		err error
 	)
 
+	// build config and set the xmlrpc client
+	d.setClient()
+
 	log.Infof("Creating SSH key..")
 	if err := ssh.GenerateSSHKey(d.GetSSHKeyPath()); err != nil {
 		return err
@@ -363,10 +367,6 @@ func (d *Driver) Create() error {
 	if err != nil {
 		return err
 	}
-
-	// build config and set the xmlrpc client
-	d.buildConfig()
-	d.setClient()
 
 	// Create template
 	template := goca.NewTemplateBuilder()
