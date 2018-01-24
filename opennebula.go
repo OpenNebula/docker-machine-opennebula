@@ -652,7 +652,6 @@ func (d *Driver) Start() error {
 		}
 
 		switch s {
-		case state.Running:
 		case state.Error:
 			return errors.New("vM in error state")
 		default:
