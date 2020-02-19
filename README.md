@@ -1,3 +1,14 @@
+<aside class="warning">
+This repository has already been added to the main OpenNebula distribution, and is therefore deprecated.
+ 
+  <ul>
+     <li><a href=https://github.com/OpenNebula/one/tree/master/src/docker_machine>Code</a>
+     <li><a href=http://docs.opennebula.org/5.10/advanced_components/applications_containerization/docker_host_provision_with_docker_machine.html>Documentation</a>
+  </ul>
+ 
+</aside>
+
+
 # Docker Machine OpenNebula Driver
 
 This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing to create docker hosts on [OpenNebula](http://www.opennebula.org). This will allow the deployment of Docker Engines using Docker Machine using OpenNebula as the backend, from a client machine.
